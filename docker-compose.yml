@@ -1,0 +1,11 @@
+services:
+  web:
+    image: contextfree-web
+    build: .
+    container_name: contextfree-web
+    ports:
+      - 3000:3000
+    volumes:
+      - ./public:/app/public:ro
+      - ./src:/app/src:ro
+
