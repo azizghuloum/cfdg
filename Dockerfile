@@ -11,17 +11,20 @@ RUN bash nodesource_setup.sh
 RUN apt install -y nodejs
 
 
-
 RUN mkdir /app
 WORKDIR /app
-RUN mkdir cfdg
-COPY --from=cfdg /context-free/cfdg.wasm ./cfdg
-COPY --from=cfdg /context-free/cfdg.wasm.map ./cfdg
-COPY --from=cfdg /context-free/cfdg.js ./cfdg
-RUN ls -l ./cfdg
 COPY package.json .
 COPY package-lock.json .
 RUN npm install
+
+RUN mkdir /cfdg
+# COPY --from=cfdg /context-free/web/cfdg.wasm /cfdg
+# COPY --from=cfdg /context-free/web/cfdg.wasm.map /cfdg
+COPY --from=cfdg /context-free/web/cfdg.js /cfdg
+COPY ./cfdg/package.json /cfdg
+COPY ./cfdg/cfdg.d.ts /cfdg
+
+RUN npm link /cfdg
 
 COPY craco.config.js .
 

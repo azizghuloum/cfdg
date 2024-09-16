@@ -1,0 +1,8 @@
+{
+  "name": "cfdg",
+  "files": [
+    "cfdg.js",
+    "cfdg.d.ts",
+    "cfdg.wasm"
+  ]
+}
