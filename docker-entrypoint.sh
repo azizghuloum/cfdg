@@ -1,3 +1,3 @@
 #!/bin/bash
 
-npm start
+exec npm start
