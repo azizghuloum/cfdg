@@ -4,8 +4,20 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
-import cfdg from "cfdg/cfdg";
-console.log(cfdg);
+
+const worker: Worker = new Worker(new URL("./worker.ts", import.meta.url));
+
+worker.onmessage = (ev) => {
+  console.log(ev);
+};
+
+worker.onerror = (ev) => {
+  console.error(ev)
+};
+
+console.log(worker);
+
+worker.postMessage("MY MSG");
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement

@@ -1,1 +1,1 @@
-export type foo = number;
+export var foo: number;
