@@ -32,7 +32,7 @@ cfdg.onRuntimeInitialized = () => {
 function doRender(action: RenderAction): string {
 
   cfdg.FS.writeFile("/input.cdfg", action.program);
-  cfdg.callMain(["-V", "-w", "600", "-h", "400", "/input.cdfg", "/output.svg"]);
+  cfdg.callMain(["--svg", "-w", "600", "-h", "400", "/input.cdfg", "/output.svg"]);
   const svg = cfdg.FS.readFile("/output.svg", {encoding: "utf8"})
   cfdg.FS.unlink("/input.cdfg");
   cfdg.FS.unlink("/output.svg");

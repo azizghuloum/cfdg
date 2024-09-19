@@ -19,15 +19,25 @@ type P = {
 type S = {worker: Worker, svg: string | undefined};
 
 class CFDGWorker extends React.Component<P, S> {
+  dorender: (program: string) => void;
   constructor(props: P) {
     super(props);
     this.state = {worker: null as any as Worker, svg: undefined};
+    this.dorender = (program: string) => {
+      const action: WorkerAction = {
+        action: "render",
+        program,
+      };
+      this.state.worker.postMessage(action);
+    };
+
   }
   componentDidMount(): void {
     const worker: Worker = new Worker(new URL("./worker.ts", import.meta.url));
     worker.onmessage = (ev) => {
       const svg = ev.data.output as string;
-      this.setState(s => ({...s, svg}));
+      const data = `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`
+      this.setState(s => ({...s, svg: data}));
     };
     worker.onerror = (ev) => {
       console.error(ev)
@@ -44,14 +54,7 @@ class CFDGWorker extends React.Component<P, S> {
   }
   
   render(): React.ReactNode {
-    const render = (program: string) => {
-      const action: WorkerAction = {
-        action: "render",
-        program,
-      };
-      this.state.worker.postMessage(action);
-    };
-    return this.props.render(render, this.state.svg);
+    return this.props.render(this.dorender, this.state.svg);
   }
 }
 
@@ -61,26 +64,28 @@ const RenderButton: React.FunctionComponent<RenderButtonProps> = ({onClick}) =>
     <button onClick={onClick}>Render</button>
   </div>;
 
+  const imgstyle = {
+    width: "100%" as const,
+    objectFit: "cover" as const,
+  };
+
 function App() {
   const [program, setProgram] = useState(sample);
   return (
     <div>
       <CFDGWorker program={program}
         onRender={() => {}}
-        render={(render, svg) => {
+        render={(render, data) => {
           return <div style={{display: "flex", flexDirection: "row"}}>
             <div>
               <Editor program={program} setProgram={setProgram}/>
               <RenderButton onClick={() => render(program)} />
             </div>
             {
-              svg 
-              ? <img src={`data:image/svg+xml;utf8,${encodeURIComponent(svg)}`}
+              data
+              ? <img src={data}
                   alt="x"
-                  style={{
-                    width: "100%",
-                    objectFit: "cover",
-                  }}/>
+                  style={imgstyle}/>
               : "no image yet"
             }
             </div>;
