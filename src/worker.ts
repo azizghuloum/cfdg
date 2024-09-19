@@ -29,14 +29,14 @@ cfdg.onRuntimeInitialized = () => {
   //cfdg.callMain([]);
 };
 
-function doRender(action: RenderAction): string {
+function doRender(action: RenderAction): Uint8Array {
 
   cfdg.FS.writeFile("/input.cdfg", action.program);
-  cfdg.callMain(["--svg", "-w", "600", "-h", "400", "/input.cdfg", "/output.svg"]);
-  const svg = cfdg.FS.readFile("/output.svg", {encoding: "utf8"})
+  cfdg.callMain(["-w", "1000", "-h", "600", "/input.cdfg", "/output.png"]);
+  const data = cfdg.FS.readFile("/output.png")
   cfdg.FS.unlink("/input.cdfg");
-  cfdg.FS.unlink("/output.svg");
-  return svg;
+  cfdg.FS.unlink("/output.png");
+  return data;
 }
 
 function performAction(action: WorkerAction) {

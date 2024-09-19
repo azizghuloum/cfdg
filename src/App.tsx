@@ -14,15 +14,15 @@ const Editor = ({program, setProgram}: EditorProps) => {
 type P = {
   program: string,
   onRender: (svg: string) => void;
-  render: (render: (program: string) => void, svg: string | undefined) => React.ReactElement;
+  render: (render: (program: string) => void, data: string | undefined) => React.ReactElement;
 };
-type S = {worker: Worker, svg: string | undefined};
+type S = {worker: Worker, data: string | undefined};
 
 class CFDGWorker extends React.Component<P, S> {
   dorender: (program: string) => void;
   constructor(props: P) {
     super(props);
-    this.state = {worker: null as any as Worker, svg: undefined};
+    this.state = {worker: null as any as Worker, data: undefined};
     this.dorender = (program: string) => {
       const action: WorkerAction = {
         action: "render",
@@ -35,9 +35,10 @@ class CFDGWorker extends React.Component<P, S> {
   componentDidMount(): void {
     const worker: Worker = new Worker(new URL("./worker.ts", import.meta.url));
     worker.onmessage = (ev) => {
-      const svg = ev.data.output as string;
-      const data = `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`
-      this.setState(s => ({...s, svg: data}));
+      const png = ev.data.output as Uint8Array;
+      const blob = new Blob([png]);
+      const url = URL.createObjectURL(blob);
+      this.setState(s => ({...s, data: url}));
     };
     worker.onerror = (ev) => {
       console.error(ev)
@@ -54,7 +55,7 @@ class CFDGWorker extends React.Component<P, S> {
   }
   
   render(): React.ReactNode {
-    return this.props.render(this.dorender, this.state.svg);
+    return this.props.render(this.dorender, this.state.data);
   }
 }
 
