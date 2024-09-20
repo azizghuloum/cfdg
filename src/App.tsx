@@ -5,18 +5,22 @@ import {WorkerAction, WorkerActionOutcome} from './worker-action';
 
 type EditorProps = {program: string, setProgram: (program: string) => void};
 const Editor = ({program, setProgram}: EditorProps) => {
-  return <textarea name="editor" style={{
-    width: "100%",
-    height: "100%",
-    backgroundColor: "transparent",
-    textShadow: "white 6px 6px 6px",
-    color: "black",
-    resize: "none",
-    border: "none",
-    //fontFamily: "Space Mono",
-    fontFamily: "Inconsolata",
-    fontSize: "1.5em",
-  }} value={program} onChange={(x) => setProgram(x.target.value)}>
+  return <textarea name="editor"
+    style={{
+      width: "100%",
+      height: "100%",
+      backgroundColor: "transparent",
+      textShadow: "grey 0px 0px 9px",
+      color: "black",
+      resize: "none",
+      border: "none",
+      //fontFamily: "Space Mono",
+      fontFamily: "Inconsolata",
+      fontSize: "1.5em",
+    }}
+    value={program}
+    spellCheck={false}
+    onChange={(x) => setProgram(x.target.value)}>
   </textarea>
 };
 
@@ -127,6 +131,8 @@ class CFDGWorker extends React.Component<P, S> {
       const action: WorkerAction = {
         action: "render",
         program,
+        width: window.document.body.clientWidth,
+        height: window.document.body.clientHeight,
       };
       this.state.pool.postMessage(action);
     };
@@ -171,7 +177,7 @@ const imgstyle: React.CSSProperties = {
   position: "absolute",
   width: "100vw",
   height: "100vh",
-  objectFit: "contain",
+  objectFit: "cover",
   top: 0,
   zIndex: -1,
 };

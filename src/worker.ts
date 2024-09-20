@@ -29,7 +29,8 @@ function doRender(action: RenderAction): WorkerActionOutcome {
 
   const filename = counter;
   cfdg.FS.writeFile(`/${filename}.cfdg`, action.program);
-  const args = ["-q", "-w", "1000", "-h", "600", `/${filename}.cfdg`, `/${filename}.png`];
+  const args = ["-q", "-w", action.width.toString(), "-h", action.height.toString(), `/${filename}.cfdg`, `/${filename}.png`];
+  console.log(args);
 
   const stderrFilename = '/stderr.txt';
   const old_stderr = cfdg.FS.getStreamChecked(2);

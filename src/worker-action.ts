@@ -2,6 +2,8 @@
 export type RenderAction = {
   action: "render",
   program: string,
+  width: number,
+  height: number,
 };
 
 export type WorkerAction = RenderAction;
