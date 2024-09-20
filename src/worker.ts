@@ -1,7 +1,7 @@
 /// <reference types="emscripten" />
 
 import * as CFDG from "cfdg/cfdg.js";
-import {RenderAction, WorkerAction} from "./worker-action";
+import {RenderAction, WorkerAction, WorkerActionOutcome} from "./worker-action";
 /* eslint-disable no-restricted-globals */
 const ctx: Worker = self as any;
 
@@ -9,44 +9,62 @@ const ctx: Worker = self as any;
 type CFDGT = {
   onRuntimeInitialized: EmscriptenModule["onRuntimeInitialized"],
   callMain: (argv: string[]) => number,
-  FS: typeof globalThis.FS,
+  FS: {getStreamChecked: (fd: number) => any} & typeof globalThis.FS,
 };
 
 const cfdg: CFDGT = CFDG as any;
-console.log("Worker Start!");
-console.log(cfdg);
 
 const queue: WorkerAction[] = [];
 let ready = false;
 cfdg.onRuntimeInitialized = () => {
-  console.log(cfdg);
-  // console.log(cfdg.FS);
-  // console.log(process.cwd());
-  // console.log(cfdg.FS.cwd());
-  // console.log(cfdg.FS.readdir(cfdg.FS.cwd()));
   ready = true;
+  postMessage("ready");
   performActions();
-  //cfdg.callMain([]);
 };
 
-function doRender(action: RenderAction): Uint8Array {
+var counter = 0;
 
-  cfdg.FS.writeFile("/input.cdfg", action.program);
-  cfdg.callMain(["-w", "1000", "-h", "600", "/input.cdfg", "/output.png"]);
-  const data = cfdg.FS.readFile("/output.png")
-  cfdg.FS.unlink("/input.cdfg");
-  cfdg.FS.unlink("/output.png");
-  return data;
+function doRender(action: RenderAction): WorkerActionOutcome {
+  counter += 1;
+
+  const filename = counter;
+  cfdg.FS.writeFile(`/${filename}.cfdg`, action.program);
+  const args = ["-q", "-w", "1000", "-h", "600", `/${filename}.cfdg`, `/${filename}.png`];
+
+  const stderrFilename = '/stderr.txt';
+  const old_stderr = cfdg.FS.getStreamChecked(2);
+  cfdg.FS.close(old_stderr);
+  const new_stderr = cfdg.FS.open(stderrFilename, 'w');
+  if (new_stderr.fd !== 2) {
+    throw new Error("file did not open as stderr");
+  }
+
+  try {
+    const retval = cfdg.callMain(args);
+    if (retval !== 0) {
+      throw new Error(`main returned ${retval}`);
+    }
+  } catch (e) {
+    cfdg.FS.close(new_stderr);
+    // BUG: stderr is now closed, reentering will not work
+    const stderr_output = cfdg.FS.readFile(stderrFilename, {encoding: "utf8"});
+    return {success: false, error: e, stderr_output};
+  } finally {
+    cfdg.FS.unlink(`/${filename}.cfdg`);
+  }
+  const data = cfdg.FS.readFile(`/${filename}.png`)
+  cfdg.FS.unlink(`/${filename}.png`);
+  return {success: true, data: data};
 }
 
 function performAction(action: WorkerAction) {
   switch (action.action) {
     case "render": {
-      const output = doRender(action);
-      postMessage({output});
+      const outcome = doRender(action);
+      postMessage(outcome);
       break;
     }
-    default: 
+    default:
       throw new Error("invalid action");
   }
 }
@@ -67,4 +85,3 @@ ctx.onmessage = (event: MessageEvent<WorkerAction>) => {
   performActions();
 };
 
-//export {};
