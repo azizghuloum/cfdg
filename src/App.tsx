@@ -5,7 +5,18 @@ import {WorkerAction, WorkerActionOutcome} from './worker-action';
 
 type EditorProps = {program: string, setProgram: (program: string) => void};
 const Editor = ({program, setProgram}: EditorProps) => {
-  return <textarea name="editor" rows={40} cols={40} value={program} onChange={(x) => setProgram(x.target.value)}>
+  return <textarea name="editor" style={{
+    width: "100%",
+    height: "100%",
+    backgroundColor: "transparent",
+    textShadow: "white 6px 6px 6px",
+    color: "black",
+    resize: "none",
+    border: "none",
+    //fontFamily: "Space Mono",
+    fontFamily: "Inconsolata",
+    fontSize: "1.5em",
+  }} value={program} onChange={(x) => setProgram(x.target.value)}>
   </textarea>
 };
 
@@ -156,34 +167,32 @@ const RenderButton: React.FunctionComponent<RenderButtonProps> = ({onClick}) =>
     <button onClick={onClick}>Render</button>
   </div>;
 
-  const imgstyle = {
-    width: "100%" as const,
-    objectFit: "cover" as const,
-  };
+const imgstyle: React.CSSProperties = {
+  position: "absolute",
+  width: "100vw",
+  height: "100vh",
+  objectFit: "contain",
+  top: 0,
+  zIndex: -1,
+};
 
 function App() {
   const [program, setProgram] = useState(sample);
   return (
-    <div>
       <CFDGWorker program={program}
         onRender={() => {}}
         render={(render, data, error) => {
-          return <div style={{display: "flex", flexDirection: "row"}}>
-            <div>
+          return <>
+            <div style={{display: "flex", flexDirection: "column", height: "100vh", background: "transparent"}}>
               <Editor program={program} setProgram={setProgram}/>
               <RenderButton onClick={() => render(program)} />
               <div style={{color: "red"}}>{error || null}</div>
             </div>
-            {
-              data
-              ? <img src={data} alt="x" style={imgstyle}/>
-              : null
-            }
-            </div>;
+            { data ? <img src={data} alt="x" style={imgstyle}/> : null }
+          </>;
           }
         }
       />
-    </div>
   );
 }
 
