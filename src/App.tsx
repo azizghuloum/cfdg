@@ -9,14 +9,14 @@ const Editor = ({program, setProgram}: EditorProps) => {
     style={{
       width: "100%",
       height: "100%",
-      backgroundColor: "transparent",
+      background: "transparent",
       textShadow: "grey 0px 0px 9px",
       color: "black",
       resize: "none",
       border: "none",
       //fontFamily: "Space Mono",
       fontFamily: "Inconsolata",
-      fontSize: "1.5em",
+      //fontSize: "1.5em",
     }}
     value={program}
     spellCheck={false}
@@ -78,6 +78,7 @@ class WorkerPool {
     worker.onmessage = (ev) => {
       this.active = null;
       this.work();
+      worker.terminate();
       this.onmessage?.(ev.data);
     }
     worker.onerror = (ev) => {
@@ -169,9 +170,9 @@ class CFDGWorker extends React.Component<P, S> {
 
 type RenderButtonProps = {onClick: () => void};
 const RenderButton: React.FunctionComponent<RenderButtonProps> = ({onClick}) =>
-  <div>
+  <>
     <button onClick={onClick}>Render</button>
-  </div>;
+  </>;
 
 const imgstyle: React.CSSProperties = {
   position: "absolute",
@@ -189,8 +190,8 @@ function App() {
         onRender={() => {}}
         render={(render, data, error) => {
           return <>
-            <div style={{display: "flex", flexDirection: "column", height: "100vh", background: "transparent"}}>
-              <Editor program={program} setProgram={setProgram}/>
+            <Editor program={program} setProgram={setProgram}/>
+            <div style={{position: "absolute", top: 0, right: 0}}>
               <RenderButton onClick={() => render(program)} />
               <div style={{color: "red"}}>{error || null}</div>
             </div>
