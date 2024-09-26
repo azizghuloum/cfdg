@@ -14,9 +14,8 @@ const Editor = ({program, setProgram}: EditorProps) => {
       color: "black",
       resize: "none",
       border: "none",
-      //fontFamily: "Space Mono",
       fontFamily: "Inconsolata",
-      //fontSize: "1.5em",
+      boxSizing: "border-box",
     }}
     value={program}
     spellCheck={false}
@@ -178,8 +177,9 @@ const imgstyle: React.CSSProperties = {
   position: "absolute",
   width: "100vw",
   height: "100vh",
-  objectFit: "cover",
+  objectFit: "contain",
   top: 0,
+  right: 0,
   zIndex: -1,
 };
 
