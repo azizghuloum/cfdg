@@ -6,7 +6,7 @@ services:
     ports:
       - 3000:3000
     environment:
-      - DEV=1
+      - DEV=0
     volumes:
       - ./public:/app/public:ro
       - ./src:/app/src:ro

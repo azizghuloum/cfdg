@@ -2,7 +2,7 @@
 
 if [ "$DEV" == "1" ]
 then
-  exec npm start
+  exec npm run dev -- --port 3000 --host
 else
-  exec serve build
+  exec npm run preview -- --port 3000 --host
 fi
