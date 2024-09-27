@@ -1,3 +1,8 @@
 #!/bin/bash
 
-exec npm start
+if [ "$DEV" == "1" ]
+then
+  exec npm start
+else
+  exec serve build
+fi

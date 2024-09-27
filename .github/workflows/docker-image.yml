@@ -7,12 +7,35 @@ on:
     branches: [ "main" ]
 
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v4
+    - run: git clone --depth=1 -b wasm https://github.com/azizghuloum/context-free.git
+    - run: (cd context-free && docker build . -t contextfree -f Wasm.Dockerfile)
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag $(GITHUB_REPOSITORY):$(date +%s)
+      run: docker build . --file Dockerfile --tag context-free-web
+    - run: (container=$(docker create context-free-web) && docker cp ${container}:/app/build ./build)
+    - uses: actions/upload-artifact@v4
+      with:
+        name: github-pages
+        path: ./build
+        if-no-files-found: error
+        retention-days: 90
+        compression-level: 6
+        overwrite: false
+        include-hidden-files: false
+  deploy:
+    if: github.ref == 'refs/heads/main'
+    needs: build
+    permissions:
+      pages: write      # to deploy to Pages
+      id-token: write   # to verify the deployment originates from an appropriate source
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

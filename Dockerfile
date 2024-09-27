@@ -9,6 +9,7 @@ RUN apt install curl vim -y
 RUN curl -fsSL https://deb.nodesource.com/setup_22.x -o nodesource_setup.sh
 RUN bash nodesource_setup.sh
 RUN apt install -y nodejs
+RUN npm install -g serve
 
 
 RUN mkdir /app
@@ -32,6 +33,7 @@ COPY craco.config.js .
 COPY tsconfig.json .
 COPY ./public ./public
 COPY ./src ./src
+RUN npm run build
 
 COPY docker-entrypoint.sh /docker-entrypoint.sh
 ENTRYPOINT ["/docker-entrypoint.sh"]
