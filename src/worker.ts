@@ -1,7 +1,10 @@
 /// <reference types="emscripten" />
 
-import * as CFDG from "cfdg/cfdg.js";
 import {RenderAction, WorkerAction, WorkerActionOutcome} from "./worker-action";
+import "cfdg/cfdg.js";
+// @ts-ignore
+const cfdg: CFDGT = self.CFDG as any;
+
 /* eslint-disable no-restricted-globals */
 const ctx: Worker = self as any;
 
@@ -12,10 +15,11 @@ type CFDGT = {
   FS: {getStreamChecked: (fd: number) => any} & typeof globalThis.FS,
 };
 
-const cfdg: CFDGT = CFDG as any;
+
 
 const queue: WorkerAction[] = [];
 let ready = false;
+
 cfdg.onRuntimeInitialized = () => {
   ready = true;
   postMessage("ready");
@@ -25,6 +29,7 @@ cfdg.onRuntimeInitialized = () => {
 var counter = 0;
 
 function doRender(action: RenderAction): WorkerActionOutcome {
+
   counter += 1;
 
   const filename = counter;

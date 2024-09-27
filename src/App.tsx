@@ -3,6 +3,7 @@ import {sample} from "./sample";
 import './App.css';
 import {WorkerAction, WorkerActionOutcome} from './worker-action';
 
+
 type EditorProps = {program: string, setProgram: (program: string) => void};
 const Editor = ({program, setProgram}: EditorProps) => {
   return <textarea name="editor"
@@ -43,7 +44,7 @@ class WorkerPool {
   private populate() {
     const count = this.initializing.length + this.ready.length;
     if (this.terminating || count >= this.poolSize || this.active) return;
-    const worker: Worker = new Worker(new URL("./worker.ts", import.meta.url));
+    const worker: Worker = new Worker(new URL("./worker", import.meta.url), {type: "module"});
     this.initializing.push(worker);
     worker.onmessage = (ev) => {
       worker.onmessage = null;
@@ -56,7 +57,7 @@ class WorkerPool {
       this.ready.push(worker);
       this.work();
     }
-    worker.onerror = (ev) => {
+    worker.onerror = () => {
       throw new Error("not yet");
     }
   }
@@ -80,7 +81,7 @@ class WorkerPool {
       worker.terminate();
       this.onmessage?.(ev.data);
     }
-    worker.onerror = (ev) => {
+    worker.onerror = () => {
       throw new Error("not yet");
     }
     worker.postMessage(message);
@@ -159,7 +160,6 @@ class CFDGWorker extends React.Component<P, S> {
       s.pool.terminateAll();
       return {};
     });
-    console.log("UNMOUNT");
   }
 
   render(): React.ReactNode {

@@ -15,11 +15,11 @@ jobs:
     - run: (cd context-free && docker build . -t contextfree -f Wasm.Dockerfile)
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag context-free-web
-    - run: (container=$(docker create context-free-web) && docker cp ${container}:/app/build ./build)
+    - run: (container=$(docker create context-free-web) && docker cp ${container}:/app/dist ./dist)
     - uses: actions/upload-pages-artifact@v3
       with:
         name: github-pages
-        path: ./build
+        path: ./dist
         retention-days: 90
   deploy:
     if: github.ref == 'refs/heads/main'

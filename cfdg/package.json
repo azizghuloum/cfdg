@@ -1,5 +1,6 @@
 {
   "name": "cfdg",
+  "type": "commonjs",
   "files": [
     "cfdg.js",
     "cfdg.d.ts"
