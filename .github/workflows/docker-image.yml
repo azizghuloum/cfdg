@@ -18,10 +18,23 @@ jobs:
     - run: (container=$(docker create context-free-web) && docker cp ${container}:/app/build ./build)
     - uses: actions/upload-artifact@v4
       with:
-        name: artifact
+        name: github-pages
         path: ./build
         if-no-files-found: error
         retention-days: 90
         compression-level: 6
         overwrite: false
         include-hidden-files: false
+  deploy:
+    needs: build
+    permissions:
+      pages: write      # to deploy to Pages
+      id-token: write   # to verify the deployment originates from an appropriate source
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
