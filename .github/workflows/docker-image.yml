@@ -14,5 +14,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+    - run: git clone --depth=1 https://github.com/azizghuloum/context-free.git
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag $GITHUB_REPOSITORY:$(date +%s)
