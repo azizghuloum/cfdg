@@ -16,15 +16,11 @@ jobs:
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag context-free-web
     - run: (container=$(docker create context-free-web) && docker cp ${container}:/app/build ./build)
-    - uses: actions/upload-artifact@v4
+    - uses: actions/upload-pages-artifact@v1
       with:
         name: github-pages
         path: ./build
-        if-no-files-found: error
         retention-days: 90
-        compression-level: 6
-        overwrite: false
-        include-hidden-files: false
   deploy:
     if: github.ref == 'refs/heads/main'
     needs: build
