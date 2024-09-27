@@ -16,7 +16,7 @@ jobs:
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag context-free-web
     - run: (container=$(docker create context-free-web) && docker cp ${container}:/app/build ./build)
-    - uses: actions/upload-pages-artifact@v1
+    - uses: actions/upload-pages-artifact@v3
       with:
         name: github-pages
         path: ./build
