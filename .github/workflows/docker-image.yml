@@ -17,4 +17,6 @@ jobs:
     - run: git clone --depth=1 -b wasm https://github.com/azizghuloum/context-free.git
     - run: (cd context-free && docker build . -t contextfree -f Wasm.Dockerfile)
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag $GITHUB_REPOSITORY:$(date +%s)
+      run: docker build . --file Dockerfile --tag context-free-web
+    - run: (container=$(docker create context-free-web) && docker cp ${container}:/cfdg/build ./build)
+    - run: ls && ls build
