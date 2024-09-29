@@ -1,4 +1,28 @@
-# React + TypeScript + Vite
+
+# Context-Free Art
+
+The idea behind Context Free Art is to have the computer generate beautiful
+artwork described by context free grammars.  Since context free grammars are
+usually recursive, this naturally leads to recursive and fractal-like images.
+
+The original project, [Context Free Art](https://www.contextfreeart.org/),
+implemented the generator as Windows, MacOS, and Unix programs: you download
+it, write your grammar, click Render, and it generates the image.
+
+This project brings Context Free Art to the web (via WebAssembly): no download
+or installation necessary.
+
+Visit [Context Free Art](https://azizghuloum.github.io/cfdg/) and give it a
+try. You might also want to visit the original
+[gallery](https://www.contextfreeart.org/gallery/) and read the
+[documentation](https://github.com/MtnViewJohn/context-free/wiki).
+
+
+![Screenshot](screenshot.png)
+
+
+<!--
+># React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
@@ -48,3 +72,5 @@ export default tseslint.config({
   },
 })
 ```
+-->
+
