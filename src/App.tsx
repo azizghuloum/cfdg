@@ -2,26 +2,31 @@ import React, {useState} from 'react';
 import {sample} from "./sample";
 import './App.css';
 import {WorkerAction, WorkerActionOutcome} from './worker-action';
+import CodeMirror, {EditorView} from '@uiw/react-codemirror';
+import {githubLightStyle, defaultSettingsGithubLight} from '@uiw/codemirror-theme-github';
+import { createTheme } from '@uiw/codemirror-themes';
 
+const myTheme = createTheme({
+  theme: 'light',
+  settings: {
+    ...defaultSettingsGithubLight,
+    background: "#ffffff00",
+    gutterBackground: "#ffffff00",
+  },
+  styles: [
+    ...githubLightStyle,
+  ],
+});
 
 type EditorProps = {program: string, setProgram: (program: string) => void};
 const Editor = ({program, setProgram}: EditorProps) => {
-  return <textarea name="editor"
-    style={{
-      width: "100%",
-      height: "100%",
-      background: "transparent",
-      textShadow: "grey 0px 0px 9px",
-      color: "black",
-      resize: "none",
-      border: "none",
-      fontFamily: "Inconsolata",
-      boxSizing: "border-box",
-    }}
+  return <CodeMirror
+    width='100vw'
+    theme={myTheme}
     value={program}
-    spellCheck={false}
-    onChange={(x) => setProgram(x.target.value)}>
-  </textarea>
+    extensions={[EditorView.lineWrapping]}
+    onChange={setProgram}
+  />;
 };
 
 
@@ -174,7 +179,7 @@ const RenderButton: React.FunctionComponent<RenderButtonProps> = ({onClick}) =>
   </>;
 
 const imgstyle: React.CSSProperties = {
-  position: "absolute",
+  position: "fixed",
   width: "100vw",
   height: "100vh",
   objectFit: "contain",
@@ -191,7 +196,7 @@ function App() {
         render={(render, data, error) => {
           return <>
             <Editor program={program} setProgram={setProgram}/>
-            <div style={{position: "absolute", top: 0, right: 0}}>
+            <div style={{position: "fixed", top: 0, right: 0}}>
               <RenderButton onClick={() => render(program)} />
               <div style={{color: "red"}}>{error || null}</div>
             </div>
