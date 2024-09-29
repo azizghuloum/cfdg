@@ -18,14 +18,21 @@ const myTheme = createTheme({
   ],
 });
 
-type EditorProps = {program: string, setProgram: (program: string) => void};
-const Editor = ({program, setProgram}: EditorProps) => {
+type EditorProps = {
+  program: string,
+  setProgram: (program: string) => void,
+  setEditing: (editing: boolean) => void,
+};
+
+const Editor = ({program, setProgram, setEditing}: EditorProps) => {
   return <CodeMirror
     width='100vw'
     theme={myTheme}
     value={program}
     extensions={[EditorView.lineWrapping]}
     onChange={setProgram}
+    onFocus={() => setEditing(true)}
+    onBlur={() => setEditing(false)}
   />;
 };
 
@@ -190,17 +197,18 @@ const imgstyle: React.CSSProperties = {
 
 function App() {
   const [program, setProgram] = useState(sample);
+  const [editing, setEditing] = useState(false);
   return (
       <CFDGWorker program={program}
         onRender={() => {}}
         render={(render, data, error) => {
           return <>
-            <Editor program={program} setProgram={setProgram}/>
+            <Editor program={program} setProgram={setProgram} setEditing={setEditing}/>
             <div style={{position: "fixed", top: 0, right: 0}}>
               <RenderButton onClick={() => render(program)} />
               <div style={{color: "red"}}>{error || null}</div>
             </div>
-            { data ? <img src={data} alt="x" style={imgstyle}/> : null }
+            { (data && !editing) ? <img src={data} alt="x" style={imgstyle}/> : null }
           </>;
           }
         }
