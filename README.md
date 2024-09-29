@@ -20,7 +20,7 @@ try. You might also want to visit the original
 
 ![Screenshot](screenshot.png)
 
-![Screenshot on iOS](screenshot-ios.png)
+![Screenshot on mobile devices](screenshot-mobile.png)
 
 
 <!--
