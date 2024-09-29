@@ -18,10 +18,9 @@ try. You might also want to visit the original
 [documentation](https://github.com/MtnViewJohn/context-free/wiki).
 
 
-![Screenshot](screenshot.png)
 
-![Screenshot on mobile devices](screenshot-mobile.png)
-
+|![Screenshot](screenshot.png)|![Screenshot on mobile devices](screenshot-mobile.png)|
+|---|---|
 
 <!--
 ># React + TypeScript + Vite
